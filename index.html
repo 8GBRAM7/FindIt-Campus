@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FindIt Campus — Student Lost &amp; Found</title>
+<meta name="description" content="A student-run lost and found board for campus. Browse found items, report what you lost, and get reunited." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23163d32'/%3E%3Ccircle cx='44' cy='44' r='20' fill='none' stroke='%23f3b73f' stroke-width='9'/%3E%3Cpath d='M59 59l17 17' stroke='%23f3b73f' stroke-width='9' stroke-linecap='round'/%3E%3C/svg%3E" />
+</head>
+<body>
+<a class="skip-link" href="#browse">Skip to the item board</a>
+
+<header class="site-header" id="top">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top" aria-label="FindIt Campus home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6" stroke="currentColor" stroke-width="2.2"/><path d="M15 15l4.5 4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </span>
+      <span class="brand__text">FindIt<span>Campus</span></span>
+    </a>
+
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#browse">Browse items</a>
+      <a href="#report">Report an item</a>
+      <a href="#how">How it works</a>
+    </nav>
+
+    <a class="btn btn--primary btn--sm" href="#report">Report an item</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <span class="pill">Run by students, for students</span>
+        <h1>Lost something on campus? <em>We'll help you find it.</em></h1>
+        <p class="hero__lede">
+          A live board of everything students have found — from water bottles in the
+          library to keys on the quad. Search it, claim it, or post what you lost.
+        </p>
+
+        <form class="search" id="heroSearch" role="search" aria-label="Search the item board">
+          <svg class="search__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <label class="sr-only" for="heroQuery">Search lost and found items</label>
+          <input id="heroQuery" type="search" placeholder="Try “airpods”, “library”, “keys”…" autocomplete="off" />
+          <button class="btn btn--primary" type="submit">Search</button>
+        </form>
+
+        <div class="hero__chips" aria-label="Popular searches">
+          <span>Popular:</span>
+          <button type="button" class="chip chip--ghost" data-quick="backpack">backpack</button>
+          <button type="button" class="chip chip--ghost" data-quick="bottle">bottle</button>
+          <button type="button" class="chip chip--ghost" data-quick="keys">keys</button>
+          <button type="button" class="chip chip--ghost" data-quick="library">library</button>
+        </div>
+
+        <dl class="hero__stats">
+          <div><dt>Returned</dt><dd>1,248</dd></div>
+          <div><dt>Items live</dt><dd id="statLive">0</dd></div>
+          <div><dt>Avg. reunion</dt><dd>19 hrs</dd></div>
+        </dl>
+      </div>
+
+      <div class="hero__media">
+        <img src="images/hero.jpg" alt="Graduating students throwing their caps into the air at sunset" width="1248" height="832" />
+        <div class="float-card float-card--found">
+          <span class="float-card__dot"></span>
+          <div>
+            <strong>Found: blue backpack</strong>
+            <span>Library, 2nd floor · 12 min ago</span>
+          </div>
+        </div>
+        <div class="float-card float-card--match">
+          <span class="float-card__icon" aria-hidden="true">✓</span>
+          <div>
+            <strong>Match found!</strong>
+            <span>Water bottle → Room 204</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="searchbar-strip" aria-label="Campuses">
+    <div class="wrap strip-inner">
+      <p>Trusted on campus by</p>
+      <ul>
+        <li>North Hall</li>
+        <li>Riverside Library</li>
+        <li>Engineering Block</li>
+        <li>Student Union</li>
+        <li>Sports Centre</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="board" id="browse">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">The board</span>
+          <h2>Recently posted items</h2>
+          <p>Everything below was posted by a student this week. Spotted your stuff? Open the item to claim it.</p>
+        </div>
+        <p class="board__count" id="resultCount" aria-live="polite"></p>
+      </div>
+
+      <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="Filter by item type">
+          <button class="tab is-active" role="tab" aria-selected="true" data-type="all">All items</button>
+          <button class="tab" role="tab" aria-selected="false" data-type="found">Found</button>
+          <button class="tab" role="tab" aria-selected="false" data-type="lost">Lost</button>
+        </div>
+
+        <div class="toolbar__right">
+          <label class="sr-only" for="catFilter">Filter by category</label>
+          <select id="catFilter">
+            <option value="all">All categories</option>
+            <option value="Bags">Bags</option>
+            <option value="Tech">Tech &amp; audio</option>
+            <option value="Keys">Keys &amp; wallets</option>
+            <option value="Drinkware">Drinkware</option>
+            <option value="Study">Study gear</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <label class="sr-only" for="sortBy">Sort items</label>
+          <select id="sortBy">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="az">A–Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="inline-search">
+        <label class="sr-only" for="boardQuery">Search items</label>
+        <input id="boardQuery" type="search" placeholder="Search by name, place or description…" autocomplete="off" />
+        <button type="button" class="btn btn--ghost btn--sm" id="clearFilters">Reset filters</button>
+      </div>
+
+      <div class="grid" id="itemGrid"></div>
+
+      <div class="empty" id="emptyState" hidden>
+        <span class="empty__icon" aria-hidden="true">🔍</span>
+        <h3>No items match that search</h3>
+        <p>Try a broader word like “bag” or “ID”, or post a lost report so other students can keep an eye out.</p>
+        <a class="btn btn--primary" href="#report">Report your lost item</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="report" id="report">
+    <div class="wrap report__grid">
+      <div class="report__intro">
+        <span class="eyebrow">Post it</span>
+        <h2>Report a lost or found item</h2>
+        <p>
+          Takes about a minute. Be specific about the colour, brand and where you last
+          saw it — details are what make matches happen.
+        </p>
+        <ul class="ticks">
+          <li><span aria-hidden="true">✓</span> Your post appears on the board instantly</li>
+          <li><span aria-hidden="true">✓</span> Contact details stay hidden until someone claims</li>
+          <li><span aria-hidden="true">✓</span> Hand valuables to the Student Union desk</li>
+        </ul>
+        <div class="report__note">
+          <strong>Found a wallet or phone?</strong>
+          Please take it to the Student Union reception (Mon–Fri, 9–5) so the owner can
+          collect it with ID. You can still post it here to help them find you.
+        </div>
+      </div>
+
+      <form class="form" id="reportForm" novalidate>
+        <div class="form__row form__row--split">
+          <div class="field">
+            <label for="itemTitle">Item name</label>
+            <input id="itemTitle" name="title" type="text" placeholder="e.g. Navy blue backpack" required maxlength="70" />
+            <p class="error" data-error-for="itemTitle"></p>
+          </div>
+          <div class="field">
+            <label for="itemCategory">Category</label>
+            <select id="itemCategory" name="category" required>
+              <option value="Bags">Bags</option>
+              <option value="Tech">Tech &amp; audio</option>
+              <option value="Keys">Keys &amp; wallets</option>
+              <option value="Drinkware">Drinkware</option>
+              <option value="Study">Study gear</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <fieldset class="field field--radio">
+          <legend>I am reporting…</legend>
+          <label class="radio"><input type="radio" name="type" value="lost" checked /><span>Something I lost</span></label>
+          <label class="radio"><input type="radio" name="type" value="found" /><span>Something I found</span></label>
+        </fieldset>
+
+        <div class="form__row form__row--split">
+          <div class="field">
+            <label for="itemLocation">Where was it?</label>
+            <input id="itemLocation" name="location" type="text" placeholder="e.g. Riverside Library, 2nd floor" required maxlength="60" />
+            <p class="error" data-error-for="itemLocation"></p>
+          </div>
+          <div class="field">
+            <label for="itemDate">Date</label>
+            <input id="itemDate" name="date" type="date" required />
+            <p class="error" data-error-for="itemDate"></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="itemDesc">Description</label>
+          <textarea id="itemDesc" name="description" rows="3" maxlength="240" placeholder="Colour, brand, stickers, what's inside…" required></textarea>
+          <p class="error" data-error-for="itemDesc"></p>
+        </div>
+
+        <div class="field">
+          <label for="itemContact">Campus email</label>
+          <input id="itemContact" name="contact" type="email" placeholder="you@campus.edu" required />
+          <p class="error" data-error-for="itemContact"></p>
+        </div>
+
+        <div class="field">
+          <label for="itemPhoto">Photo <span class="field__hint">(optional)</span></label>
+          <div class="upload">
+            <input id="itemPhoto" name="photo" type="file" accept="image/*" />
+            <span class="upload__label">Choose a photo — JPG or PNG</span>
+            <img id="photoPreview" class="upload__preview" alt="Preview of the photo you selected" hidden />
+          </div>
+        </div>
+
+        <button class="btn btn--primary btn--block" type="submit">Post to the board</button>
+        <p class="form__foot">Posts are saved in your browser for this demo. No account needed.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="how" id="how">
+    <div class="wrap">
+      <div class="section-head section-head--center">
+        <span class="eyebrow">How it works</span>
+        <h2>Three steps to a reunion</h2>
+        <p>Most items on the board find their way home within a day.</p>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="step__num">01</span>
+          <h3>Post or search</h3>
+          <p>Lost it? File a report with a description. Found it? Snap a photo and post it in seconds.</p>
+        </li>
+        <li class="step">
+          <span class="step__num">02</span>
+          <h3>Match and message</h3>
+          <p>Owners claim an item from the board. Contact details unlock only after a claim, so nothing is public.</p>
+        </li>
+        <li class="step">
+          <span class="step__num">03</span>
+          <h3>Meet and collect</h3>
+          <p>Pick a busy, well-lit spot like the Student Union, check the details and hand it back.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap cta__inner">
+      <div>
+        <h2>Found something that isn't yours?</h2>
+        <p>One post could save someone's week. It takes less than a minute.</p>
+      </div>
+      <a class="btn btn--light" href="#report">Post a found item</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer__grid">
+    <div>
+      <a class="brand brand--footer" href="#top">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6" stroke="currentColor" stroke-width="2.2"/><path d="M15 15l4.5 4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </span>
+        <span class="brand__text">FindIt<span>Campus</span></span>
+      </a>
+      <p>A student-built lost and found board for campus. Not an official university service.</p>
+    </div>
+    <div>
+      <h3>Board</h3>
+      <ul>
+        <li><a href="#browse">Browse items</a></li>
+        <li><a href="#report">Report an item</a></li>
+        <li><a href="#how">How it works</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Help</h3>
+      <ul>
+        <li><a href="#report">Posting guidelines</a></li>
+        <li><a href="#how">Safe handover tips</a></li>
+        <li><a href="mailto:lostandfound@campus.edu">lostandfound@campus.edu</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Desk hours</h3>
+      <ul>
+        <li>Student Union, Room 12</li>
+        <li>Mon–Fri · 9:00–17:00</li>
+        <li>Sat · 10:00–14:00</li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer__bottom">
+    <p>© <span id="year">2026</span> FindIt Campus. Built by students, for students.</p>
+    <p>Made with HTML, CSS &amp; JavaScript.</p>
+  </div>
+</footer>
+
+<!-- Item detail dialog -->
+<dialog class="modal" id="itemModal" aria-labelledby="modalTitle">
+  <button class="modal__close" id="modalClose" type="button" aria-label="Close item details">✕</button>
+  <div class="modal__media">
+    <img id="modalImg" src="" alt="" />
+    <span class="badge" id="modalBadge">Found</span>
+  </div>
+  <div class="modal__body">
+    <p class="modal__cat" id="modalCategory"></p>
+    <h2 id="modalTitle"></h2>
+    <dl class="modal__meta">
+      <div><dt>Location</dt><dd id="modalLocation"></dd></div>
+      <div><dt>Date</dt><dd id="modalDate"></dd></div>
+      <div><dt>Posted by</dt><dd id="modalPoster"></dd></div>
+    </dl>
+    <p class="modal__desc" id="modalDesc"></p>
+    <div class="modal__contact">
+      <p><strong>Contact details are hidden until you claim.</strong> Only claim an item that is actually yours — it's someone's day you're holding.</p>
+      <button class="btn btn--primary btn--block" id="claimBtn" type="button">This is mine — reveal contact</button>
+      <p class="modal__email" id="modalEmail" hidden></p>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
